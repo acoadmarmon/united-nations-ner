@@ -1,6 +1,5 @@
-from datasets import load_dataset, load_metric
+from datasets import load_metric
 from transformers import AutoTokenizer
-import transformers
 import un_ner_tokens as get_tokens
 from transformers import AutoModelForTokenClassification, TrainingArguments, Trainer
 from transformers import DataCollatorForTokenClassification
@@ -9,10 +8,20 @@ import numpy as np
 import torch
 print(torch.cuda.is_available())
 
-label_list = ['O', 'B-PER', 'I-PER', 'B-ORG', 'I-ORG', 'B-LOC', 'I-LOC', 'B-MISC', 'I-MISC']
-label_encoding_dict = {'I-PRG': 0,'I-I-MISC': 0, 'I-OR': 0, 'O': 0, 'I-': 0, 'VMISC': 0, 'B-PER': 1, 'I-PER': 2, 'B-ORG': 3, 'I-ORG': 4, 'B-LOC': 5, 'I-LOC': 6, 'B-MISC': 7, 'I-MISC': 8}
+label_list = [
+    'O',       # Outside of a named entity
+    'B-MISC',  # Beginning of a miscellaneous entity right after another miscellaneous entity
+    'I-MISC',  # Miscellaneous entity
+    'B-PER',   # Beginning of a person's name right after another person's name
+    'I-PER',   # Person's name
+    'B-ORG',   # Beginning of an organisation right after another organisation
+    'I-ORG',   # Organisation
+    'B-LOC',   # Beginning of a location right after another location
+    'I-LOC'    # Location
+]
+label_encoding_dict = {'I-PRG': 2,'I-I-MISC': 2, 'I-OR': 6, 'O': 0, 'I-': 0, 'VMISC': 0, 'B-PER': 3, 'I-PER': 4, 'B-ORG': 5, 'I-ORG': 6, 'B-LOC': 7, 'I-LOC': 8, 'B-MISC': 1, 'I-MISC': 2}
 
-task = "ner" # Should be one of "ner", "pos" or "chunk"
+task = "ner" 
 model_checkpoint = "distilbert-base-uncased"
 batch_size = 16
     
@@ -58,11 +67,11 @@ model = AutoModelForTokenClassification.from_pretrained(model_checkpoint, num_la
 args = TrainingArguments(
     f"test-{task}",
     evaluation_strategy = "epoch",
-    learning_rate=2e-5,
+    learning_rate=1e-4,
     per_device_train_batch_size=batch_size,
     per_device_eval_batch_size=batch_size,
     num_train_epochs=3,
-    weight_decay=0.01,
+    weight_decay=0.00001,
 )
 
 data_collator = DataCollatorForTokenClassification(tokenizer)

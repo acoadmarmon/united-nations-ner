@@ -1,1 +1,5 @@
 un-ner.model
+cuda_params.bat
+runs/
+.ipynb_checkpoints
+__pycache__
