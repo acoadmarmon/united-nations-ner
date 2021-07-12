@@ -5,7 +5,7 @@ from datasets import Dataset
 from datasets import load_dataset
 
 def get_tokens_and_ner_tags(filename):
-    with open(filename, 'r') as f:
+    with open(filename, 'r', encoding="utf8") as f:
         lines = f.readlines()
         split_list = [list(y) for x, y in itertools.groupby(lines, lambda z: z == '\n') if not x]
         tokens = [[x.split('\t')[0] for x in y] for y in split_list]

@@ -6,6 +6,8 @@ from transformers import AutoModelForTokenClassification, TrainingArguments, Tra
 from transformers import DataCollatorForTokenClassification
 import numpy as np
 
+import torch
+print(torch.cuda.is_available())
 
 label_list = ['O', 'B-PER', 'I-PER', 'B-ORG', 'I-ORG', 'B-LOC', 'I-LOC', 'B-MISC', 'I-MISC']
 label_encoding_dict = {'I-PRG': 0,'I-I-MISC': 0, 'I-OR': 0, 'O': 0, 'I-': 0, 'VMISC': 0, 'B-PER': 1, 'I-PER': 2, 'B-ORG': 3, 'I-ORG': 4, 'B-LOC': 5, 'I-LOC': 6, 'B-MISC': 7, 'I-MISC': 8}
@@ -100,3 +102,7 @@ trainer = Trainer(
 )
 
 trainer.train()
+
+trainer.evaluate()
+
+trainer.save_model('un-ner.model')
